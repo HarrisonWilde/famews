@@ -1,0 +1,3 @@
+[submodule "HIRID-ICU-Benchmark"]
+	path = HIRID-ICU-Benchmark
+	url = git@github.com:ratschlab/HIRID-ICU-Benchmark.git
