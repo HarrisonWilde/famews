@@ -1,0 +1,72 @@
+import gin.torch.external_configurables
+import famews.train.pipeline
+import famews.data.datasets
+import famews.models.encoders
+import famews.train.sequence
+import famews.train.utils
+
+# Model Parameter
+EMB = 231
+HIDDEN = 64
+NUM_CLASSES = 1
+DEPTH = 1
+
+# Training Parameter
+LR = 3e-4
+BS = 64
+EPOCHS = 2
+TASK = 'Dynamic_CircFailure_12Hours'
+ACC = 'gpu'
+WORKERS = 4
+
+# Data Parameter
+RES = 1
+RES_LAB = 1
+MAXLEN = 2016
+DATA_PATH = "{...}/ml_stage/{data}.h5"
+
+# Dataset
+ICUVariableLengthDataset.maxlen = %MAXLEN
+
+ICUVariableLengthLoaderTables.splits = ['train','test','val']
+ICUVariableLengthLoaderTables.task = %TASK
+ICUVariableLengthLoaderTables.data_resampling = %RES
+ICUVariableLengthLoaderTables.label_resampling = %RES_LAB
+ICUVariableLengthLoaderTables.on_RAM = False
+
+
+# DLTrainPipeline
+DLTrainPipeline.do_train = True
+DLTrainPipeline.do_test = True
+
+
+# SetupTrain Stage
+SetupTrain.model = @LSTM()
+SetupTrain.dataset_class = @ICUVariableLengthDataset
+SetupTrain.wrapper_class = @SequenceWrapper
+SetupTrain.data_path = %DATA_PATH
+
+# TrainWithPL Stage
+TrainWithPL.batch_size = %BS
+TrainWithPL.max_epochs = %EPOCHS
+TrainWithPL.num_workers = %WORKERS
+TrainWithPL.class_weights = None
+TrainWithPL.accelerator = %ACC
+TrainWithPL.early_stopping_patience = 4
+
+# TestModelPL Stage
+TestModelPL.accelerator = %ACC
+TestModelPL.batch_size = %BS
+TestModelPL.num_workers = %WORKERS
+
+# Training Wrapper
+SequenceWrapper.learning_rate = %LR
+SequenceWrapper.weight_decay = 1e-6
+SequenceWrapper.loss = @binary_cross_entropy_with_logits
+SequenceWrapper.task = 'classification/binary'
+
+# Encoder params
+LSTM.input_dim = %EMB
+LSTM.hidden_dim = %HIDDEN
+LSTM.num_layers = %DEPTH
+LSTM.num_classes = %NUM_CLASSES

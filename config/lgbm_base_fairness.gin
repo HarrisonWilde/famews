@@ -1,0 +1,130 @@
+import gin.torch.external_configurables
+import famews.train.pipeline
+import famews.data.datasets
+import famews.models.encoders
+import famews.train.sequence
+import famews.train.utils
+import famews.utils.handle_predictions
+import famews.fairness_check.model_performance.analyse_performance
+import famews.fairness_check.timegap_alarm_event.analyse_timegap
+import famews.fairness_check.medical_variables.analyse_med_vars
+import famews.fairness_check.analysis_pipeline
+import famews.fairness_check.feature_importance.analyse_feature_importance
+import famews.fairness_check.report_generation.create_pdf
+import famews.fairness_check.missingness.analyse_missingness
+
+# Model Parameter
+NUM_CLASSES = 1
+EPOCHS = 100000
+DEPTH = 4
+NUM_LEAVES = 16
+SUBSAMPLE_DATA = 0.33
+SUBSAMPLE_FEAT = 0.33
+BAGGING_FREQ  = 1
+MIN_CHILD_LEAF = 1000
+
+
+TASK = 'Dynamic_CircFailure_12Hours'
+HORIZON = 12
+ACC = 'cpu'
+WORKERS = -1
+
+# Data Parameter
+RES = 1
+RES_LAB = 1
+MAXLEN = 2016
+DATA_PATH = "{...}/ml_stage/{data}.h5"
+
+# ----------------- FairnessAnalysisPipeline -------------
+FairnessAnalysisPipeline.use_multiple_predictions = True
+#FairnessAnalysisPipeline.threshold_score = 0.31
+FairnessAnalysisPipeline.name_threshold = "event_recall_0.8"
+FairnessAnalysisPipeline.horizon = %HORIZON
+FairnessAnalysisPipeline.max_len = %MAXLEN
+FairnessAnalysisPipeline.timestep = 5
+FairnessAnalysisPipeline.analysis_stages = [@AnalysePerformanceGroup, @AnalyseTimeGapGroup, @AnalyseMedVarsGroup, @AnalyseFeatImportanceGroup, @AnalyseMissingnessGroup, @CreatePDFReport]
+FairnessAnalysisPipeline.do_stat_test = True
+FairnessAnalysisPipeline.significance_level = 0.001
+FairnessAnalysisPipeline.filter_delta = 0
+
+# ----------------- SetUpGroupDef ----------------------
+SetUpGroupDef.group_config_file = "./config/group_hirid_complete.yaml" 
+
+# ----------------- LoadPatientsDf ---------------------
+LoadPatientsDf.patients_df_file = "./preprocessed_data/HiRID/socioinfo_patients_groups.csv"
+LoadPatientsDf.pid_name = "patientid"
+
+# ---------------- LoadEventBounds ---------------------
+LoadEventBounds.event_bounds_file = "./preprocessed_data/HiRID/patients_cf_bounds.pkl"
+#LoadEventBounds.merge_time_min = 30 #in minutes
+
+# -----------------LoadSplitPids ---------------------
+LoadSplitPids.split_file = "./preprocessed_data/HiRID/pid_split.pickle"
+#LoadSplitPids.data_table_file = DATA_PATH
+
+# ----------------- Handle predictions ----------------- 
+#HandlePredictions.split = "test"
+HandleMultiplePredictions.split = "test"
+HandleMultiplePredictions.root_predictions_path = "./logs/lgbm_base10/test/loyal-capable-copperhead"
+HandleMultiplePredictions.list_seeds = ["0", "1111", "2222", "3333", "4444", "5555", "6666", "7777", "8888", "9999"]
+
+# ----------------- AnalysePerformanceGroup ------------
+AnalysePerformanceGroup.use_cache = True
+AnalysePerformanceGroup.overwrite = False
+AnalysePerformanceGroup.store_curve = True
+AnalysePerformanceGroup.nbins_calibration = 20
+AnalysePerformanceGroup.metrics_binary_to_check = ["recall", "precision", "npv", "fpr", "corrected_precision", "corrected_npv", "event_recall"]
+AnalysePerformanceGroup.metrics_score_to_check = ["positive_class_score", "negative_class_score", "auroc", "auprc", "corrected_auprc", "event_auprc", "corrected_event_auprc", "calibration_error"]
+
+# ----------------- AnalyseTimeGapGroup ------------
+AnalyseTimeGapGroup.use_cache = True
+AnalyseTimeGapGroup.overwrite = False
+AnalyseTimeGapGroup.groups_start_event = [0, 3, 6, 12]
+
+
+# ----------------AnalyseMedVarsGroup---------------
+AnalyseMedVarsGroup.use_cache = True
+AnalyseMedVarsGroup.overwrite = False
+AnalyseMedVarsGroup.path_common_stage_dir = "{HiRID processed data}/common_stage"
+AnalyseMedVarsGroup.patients_source = 'hirid'
+AnalyseMedVarsGroup.classical_vars = ["a_Lac"]
+AnalyseMedVarsGroup.conditioned_vars = {'ABPm': ('has_vasop', False)}
+AnalyseMedVarsGroup.specified_conditions = {'has_vasop': {'norepinephrine': ('val>0', 'val==0'), 'epinephrine': ('val>0', 'val==0'), 'dobutamine': ('val>0', 'val==0'),
+                                                          'milrinone': ('val>0', 'val==0'), 'levosimendan': ('val>0', 'val==0'), 'theophyllin': ('val>0', 'val==0'),
+                                                          'vasopressin': ('val>0', 'val==0')}}
+AnalyseMedVarsGroup.vars_units = {"a_Lac": "mmol/l", "ABPm": "mmHg"}
+
+
+# ----------------AnalyseFeatImportanceGroup---------------
+AnalyseFeatImportanceGroup.use_cache = True
+AnalyseFeatImportanceGroup.overwrite = False
+AnalyseFeatImportanceGroup.ml_stage_data_path = %DATA_PATH
+AnalyseFeatImportanceGroup.split = "test"
+AnalyseFeatImportanceGroup.root_model_path = "./logs/lgbm_base10/test/loyal-capable-copperhead"
+AnalyseFeatImportanceGroup.model_seeds = ["0", "1111", "2222", "3333", "4444", "5555", "6666", "7777", "8888", "9999"]
+AnalyseFeatImportanceGroup.model_type = 'classical_ml'
+AnalyseFeatImportanceGroup.model_save_name = 'model.joblib'
+AnalyseFeatImportanceGroup.task_name = %TASK 
+AnalyseFeatImportanceGroup.root_shap_values_path = "./logs/lgbm_base10/test/loyal-capable-copperhead"
+#AnalyseFeatImportanceGroup.feature_names_path = ""
+
+# ----------------AnalyseMissingnessGroup---------------
+AnalyseMissingnessGroup.use_cache = True
+AnalyseMissingnessGroup.overwrite = False
+AnalyseMissingnessGroup.path_common_stage_dir = "{HiRID processed data}/common_stage"
+AnalyseMissingnessGroup.patients_source = 'hirid'
+AnalyseMissingnessGroup.medical_vars = {'a_Lac': 480, 'Spitzendruck': 5}
+AnalyseMissingnessGroup.vars_only_patient_msrt = ['a_Lac']
+AnalyseMissingnessGroup.category_intensity = {"insufficient": (0, 0.9), "enough": (0.9, 1)}
+AnalyseMissingnessGroup.metrics_binary_to_check = ["recall", "precision", "npv", "fpr", "corrected_precision",  "corrected_npv"]
+AnalyseMissingnessGroup.metrics_score_to_check = ["positive_class_score", "negative_class_score", "auroc", "auprc", "corrected_auprc"]
+
+# ----------------- CreatePDFReport --------------------
+CreatePDFReport.display_stat_test_table = True
+CreatePDFReport.colors = ["tab:blue", "tab:orange", "tab:green", "tab:red", "tab:purple", "tab:pink", "tab:brown"]
+CreatePDFReport.figsize_cal_curve = (6,4)
+CreatePDFReport.figsize_curves = (4, 3.75)
+CreatePDFReport.figsize_boxplot_metrics = (8, 3)
+CreatePDFReport.figsize_barplot_intensity = (7, 4)
+CreatePDFReport.k_feat_importance = 15
+CreatePDFReport.max_cols_topkfeat_table = 4

@@ -1,0 +1,12 @@
+group:
+    sex: [F, M]
+    age_group: [<50, 50-65, 65-75, 75-85, '>85']
+    APACHE_group: [Cardiovascular, Neurological, Gastrointestinal, Respiratory, Other, Trauma, Metabolic]
+    #los_group: [<16h, 16-24h, 24-48h, '>48h']
+    surgical_status: [Surgical, Non-surgical]
+    admission_type:  [emergency, elective]
+    #discharge_status: [dead, alive]
+
+type_table_group: 
+    binary_group: [sex, surgical_status, admission_type]
+    multicat_group: [age_group, APACHE_group]
