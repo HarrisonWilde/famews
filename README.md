@@ -18,6 +18,8 @@ git submodule update
 # the subsequent steps rely on the different stage outputs defined by Yèche et al.
 ```
 
+Then please follow the instructions of the HiRID Benchmark repository to obtain preprocessed data in a suitable format.
+
 ### Conda Environment
 
 A conda environment configuration is provided: `environment_linux.yml`. You can create 
