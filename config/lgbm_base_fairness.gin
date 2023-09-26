@@ -37,7 +37,6 @@ DATA_PATH = "{...}/ml_stage/{data}.h5"
 
 # ----------------- FairnessAnalysisPipeline -------------
 FairnessAnalysisPipeline.use_multiple_predictions = True
-#FairnessAnalysisPipeline.threshold_score = 0.31
 FairnessAnalysisPipeline.name_threshold = "event_recall_0.8"
 FairnessAnalysisPipeline.horizon = %HORIZON
 FairnessAnalysisPipeline.max_len = %MAXLEN
@@ -53,14 +52,18 @@ SetUpGroupDef.group_config_file = "./config/group_hirid_complete.yaml"
 # ----------------- LoadPatientsDf ---------------------
 LoadPatientsDf.patients_df_file = "./preprocessed_data/HiRID/socioinfo_patients_groups.csv"
 LoadPatientsDf.pid_name = "patientid"
+LoadPatientsDf.patients_source = "hirid"
+LoadPatientsDf.general_table_hirid_path = "{HiRID processed data}/general_table_extended.parquet"
 
 # ---------------- LoadEventBounds ---------------------
 LoadEventBounds.event_bounds_file = "./preprocessed_data/HiRID/patients_cf_bounds.pkl"
-#LoadEventBounds.merge_time_min = 30 #in minutes
+LoadEventBounds.patient_endpoint_data_dir = "{HiRID processed data}/endpoints"
+LoadEventBounds.event_column = "circ_failure_status"
+LoadEventBounds.patients_source = "hirid"
 
 # -----------------LoadSplitPids ---------------------
 LoadSplitPids.split_file = "./preprocessed_data/HiRID/pid_split.pickle"
-#LoadSplitPids.data_table_file = DATA_PATH
+LoadSplitPids.data_table_file = DATA_PATH
 
 # ----------------- Handle predictions ----------------- 
 #HandlePredictions.split = "test"
@@ -106,7 +109,6 @@ AnalyseFeatImportanceGroup.model_type = 'classical_ml'
 AnalyseFeatImportanceGroup.model_save_name = 'model.joblib'
 AnalyseFeatImportanceGroup.task_name = %TASK 
 AnalyseFeatImportanceGroup.root_shap_values_path = "./logs/lgbm_base10/test/loyal-capable-copperhead"
-#AnalyseFeatImportanceGroup.feature_names_path = ""
 
 # ----------------AnalyseMissingnessGroup---------------
 AnalyseMissingnessGroup.use_cache = True
