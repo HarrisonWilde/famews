@@ -26,6 +26,7 @@ A conda environment configuration is provided: `environment_linux.yml`. You can 
 the environment with:
 ```
 conda env create -f environment_linux.yml
+conda activate famews
 ```
 
 ### Code Package
@@ -41,12 +42,10 @@ pip install -e ./famews
 
 We use [Gin Configurations](https://github.com/google/gin-config/tags) to configure the
 machine learning pipelines, preprocessing, and evaluation pipelines. Example configurations are in `./config/example`.
-If implement a configurable component, please make sure an example config of that component is to be found
-in any of the example configurations.
 
 ## Pipeline Overview
 
-Any task (preprocessing, training, evaluation) is to be run with a script located in
+Any task (preprocessing, training, evaluation, fairness analysis) is to be run with a script located in
 `famews/scripts`. Ideally these scripts invoke a `Pipeline` object, which conists of different
 `PipelineStage` objects.
 
