@@ -274,6 +274,7 @@ class LoadPatientsDf(StatefulPipelineStage):
         if self.patients_df_file.exists():
             self.state.patients_df = pd.read_csv(self.patients_df_file).set_index(self.pid_name)
         else:
+            self.patients_df_file.parent.mkdir(parents=True, exist_ok=True)
             if self.patients_source == "hirid":
                 self.state.patients_df = create_patients_df_hirid(
                     self.general_table_hirid_path,
@@ -366,6 +367,7 @@ class LoadEventBounds(StatefulPipelineStage):
             with open(self.event_bounds_file, "rb") as f:
                 self.state.event_bounds = pickle.load(f)
         else:
+            self.event_bounds_file.parent.mkdir(parents=True, exist_ok=True)
             self.state.event_bounds = get_event_bounds_patients(
                 Path(self.patient_endpoint_data_dir),
                 self.event_column,
@@ -430,6 +432,7 @@ class LoadSplitPids(StatefulPipelineStage):
             with open(self.split_file, "rb") as f:
                 self.state.pid_split = pickle.load(f)
         else:
+            self.split_file.parent.mkdir(parents=True, exist_ok=True)
             self.state.pid_split = {}
             patient_windows = tables.open_file(self.data_table_file).root.patient_windows
             for split in ["train", "val", "test"]:
