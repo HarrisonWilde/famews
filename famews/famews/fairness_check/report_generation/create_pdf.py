@@ -478,15 +478,16 @@ class CreatePDFReport(StatefulPipelineStage):
                     f"For each grouping, we propose a table that presents the results of the statistical analysis: comparing the different performance metrics for a cohort against the rest of the patients. P-values are obtained by running the Mann-Whitney U test with Bonferroni correction. We display only metrics and cohorts with a significant p-value (smaller than {self.state.significance_level}/number of comparisons) and whose delta is bigger than {self.state.filter_delta}. For binary grouping, we display the category with the worst distribution for each metric. While for multicategorical grouping, we display whether the distribution for the category is better or worse than for the rest of patients\n"
                 )
             )
-            story.append(
-                Paragraph(
-                    "We also display the calibration curve for each grouping's categories as well as the curves corresponding to each score-based metrics."
-                )
-            )
         else:
             story.append(
                 Paragraph(
-                    "For each grouping, we display box plots that show the performance metrics' distributions for the different categories of patients. We also display the calibration curve for each grouping's categories as well as the curves corresponding to each score-based metric."
+                    "For each grouping, we display box plots that show the performance metrics' distributions for the different categories of patients."
+                )
+            )
+        if hasattr(self.state, "curves_group") and self.state.curves_group is not None:
+            story.append(
+                Paragraph(
+                    "We also display the calibration curve for each grouping's categories as well as the curves corresponding to each score-based metrics."
                 )
             )
         for group_name, cats in self.state.groups.items():
@@ -532,22 +533,23 @@ class CreatePDFReport(StatefulPipelineStage):
                 story.append(df2table(stat_test_groups[group_name]))
             if hasattr(self.state, "curves_group") and self.state.curves_group is not None:
                 story.append(Paragraph("<br />\n <br />"))
-                fig_calibration = draw_calibration_group(
-                    self.state.curves_group,
-                    group_name,
-                    cats,
-                    self.colors,
-                    self.figsize_cal_curve,
-                    "Calibration curve",
-                )
-                story.append(
-                    Paragraph(
-                        f"<u>Figure {self.section_counter}.{subsection_counter}.{subsubsection_counter}.{chr(counter_figure)}</u>",
-                        self.style["table_title"],
+                if "calibration_error" in self.list_metrics_performance:
+                    fig_calibration = draw_calibration_group(
+                        self.state.curves_group,
+                        group_name,
+                        cats,
+                        self.colors,
+                        self.figsize_cal_curve,
+                        "Calibration curve",
                     )
-                )
-                story.append(fig2image(fig_calibration))
-                counter_figure += 1
+                    story.append(
+                        Paragraph(
+                            f"<u>Figure {self.section_counter}.{subsection_counter}.{subsubsection_counter}.{chr(counter_figure)}</u>",
+                            self.style["table_title"],
+                        )
+                    )
+                    story.append(fig2image(fig_calibration))
+                    counter_figure += 1
                 if "auroc" in self.list_metrics_performance:
                     fig_roc = draw_roc_group(
                         metrics_df,
