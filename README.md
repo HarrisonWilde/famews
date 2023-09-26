@@ -5,7 +5,7 @@
 
 ## Setup
 
-This repository depends on the workd done by [Yèche et al. HiRID Benchmark](https://github.com/ratschlab/HIRID-ICU-Benchmark)
+This repository depends on the work done by [Yèche et al. HiRID Benchmark](https://github.com/ratschlab/HIRID-ICU-Benchmark)
 to preprocess the HiRID dataset and get it ready for model training, as well as inference and fairness analysis.
 
 The [HiRID Benchmark](https://github.com/ratschlab/HIRID-ICU-Benchmark) repository with the preprocessing is included as a submodule in this repository. To clone the repository with the submodule, run:
