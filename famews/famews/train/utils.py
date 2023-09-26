@@ -97,7 +97,9 @@ def save_gin_config_file(log_dir: Path, filename: str = "train_config.gin"):
     log_dir: Path
         directory to store config to
     """
-    with open(os.path.join(log_dir, filename), "w") as f:
+    config_path = log_dir / filename
+    config_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(config_path, "w") as f:
         f.write(gin.operative_config_str())
 
 
