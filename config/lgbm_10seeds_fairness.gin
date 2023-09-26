@@ -36,7 +36,7 @@ MAXLEN = 2016
 DATA_PATH = "{...}/ml_stage/{data}.h5"
 
 # ----------------- FairnessAnalysisPipeline -------------
-FairnessAnalysisPipeline.use_multiple_predictions = False
+FairnessAnalysisPipeline.use_multiple_predictions = True
 FairnessAnalysisPipeline.name_threshold = "event_recall_0.8"
 FairnessAnalysisPipeline.horizon = %HORIZON
 FairnessAnalysisPipeline.max_len = %MAXLEN
@@ -66,7 +66,10 @@ LoadSplitPids.split_file = "./preprocessed_data/HiRID/pid_split.pickle"
 LoadSplitPids.data_table_file = DATA_PATH
 
 # ----------------- Handle predictions ----------------- 
-HandlePredictions.split = "test"
+#HandlePredictions.split = "test"
+HandleMultiplePredictions.split = "test"
+HandleMultiplePredictions.root_predictions_path = "./logs/lgbm_base10/test/loyal-capable-copperhead"
+HandleMultiplePredictions.list_seeds = ["0", "1111", "2222", "3333", "4444", "5555", "6666", "7777", "8888", "9999"]
 
 # ----------------- AnalysePerformanceGroup ------------
 AnalysePerformanceGroup.use_cache = True
@@ -100,11 +103,12 @@ AnalyseFeatImportanceGroup.use_cache = True
 AnalyseFeatImportanceGroup.overwrite = False
 AnalyseFeatImportanceGroup.ml_stage_data_path = %DATA_PATH
 AnalyseFeatImportanceGroup.split = "test"
-AnalyseFeatImportanceGroup.root_model_path = "./data/lgbm_base"
+AnalyseFeatImportanceGroup.root_model_path = "./logs/lgbm_base10/test/loyal-capable-copperhead"
+AnalyseFeatImportanceGroup.model_seeds = ["0", "1111", "2222", "3333", "4444", "5555", "6666", "7777", "8888", "9999"]
 AnalyseFeatImportanceGroup.model_type = 'classical_ml'
 AnalyseFeatImportanceGroup.model_save_name = 'model.joblib'
-AnalyseFeatImportanceGroup.task_name = %TASK
-AnalyseFeatImportanceGroup.root_shap_values_path = "./logs/lgbm_base"
+AnalyseFeatImportanceGroup.task_name = %TASK 
+AnalyseFeatImportanceGroup.root_shap_values_path = "./logs/lgbm_base10/test/loyal-capable-copperhead"
 
 # ----------------AnalyseMissingnessGroup---------------
 AnalyseMissingnessGroup.use_cache = True

@@ -49,6 +49,7 @@ SetupTrainSK.model = @LGBMClassifier()
 SetupTrainSK.dataset_class = @ICUVariableLengthDataset
 SetupTrainSK.wrapper_class = @TabularWrapper
 SetupTrainSK.data_path = %DATA_PATH
+SetupTrainSK.load_weights = "./data/lgbm_base"
 
 # TrainWithSK Stage
 TrainWithSK.max_iter = %EPOCHS
@@ -74,6 +75,6 @@ LGBMClassifier.subsample_freq = %BAGGING_FREQ
 LGBMClassifier.colsample_bytree = %SUBSAMPLE_FEAT
 
 # ----------------- Handle predictions ----------------- 
-HandlePredictions.accelerator = %ACC # pass accelerator again here in case we perform inference
-HandlePredictions.use_pred_cache = True # use a cache for the predictions (cache them if not yet and use cached if available), will rely on the `state.log_dir)`
+HandlePredictions.accelerator = %ACC
+HandlePredictions.use_pred_cache = True
 HandlePredictions.split = "test"
