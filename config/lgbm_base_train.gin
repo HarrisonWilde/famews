@@ -39,7 +39,7 @@ ICUVariableLengthLoaderTables.use_feat = False # load and use the extracted feat
 ICUVariableLengthLoaderTables.on_RAM = False
 
 # MLTrainPipeline
-MLTrainPipeline.do_train = False
+MLTrainPipeline.do_train = True
 MLTrainPipeline.do_test = True
 MLTrainPipeline.stages = [@HandlePredictions] # add the HandlePredictions stage to the pipeline 
 
@@ -49,7 +49,6 @@ SetupTrainSK.model = @LGBMClassifier()
 SetupTrainSK.dataset_class = @ICUVariableLengthDataset
 SetupTrainSK.wrapper_class = @TabularWrapper
 SetupTrainSK.data_path = %DATA_PATH
-SetupTrainSK.load_weights = "./data/models/lgbm_base"
 
 # TrainWithSK Stage
 TrainWithSK.max_iter = %EPOCHS
