@@ -41,7 +41,7 @@ pip install -e ./famews
 ### Configurations
 
 We use [Gin Configurations](https://github.com/google/gin-config/tags) to configure the
-machine learning pipelines, preprocessing, and evaluation pipelines. Example configurations are in `./config`.
+machine learning pipelines, preprocessing, and evaluation pipelines. Example configurations are in `./config`.  
 Please note that some paths need to be completed in these configs based on where the preprocessing outputs have been saved.
 To facilitate this step, they are all gathered under `# Paths preprocessed data` or `# Data parameter`.
 
@@ -59,7 +59,7 @@ TODO: refer to HiRID submodule
 
 ### ML Training
 
-To facilitate experimentation, we provide model weights in `./data/models`
+To facilitate experimentation, we provide model weights in `./data/models`.
 
 #### LGBM model
 To train a LGBM model, an example GIN config is available at `./config/lgbm_base_train.gin`.
@@ -108,7 +108,7 @@ python -m famews.scripts.train_sequence_model \
 Note that these runs will also store in the log directory the predictions obtained on the test set.
 
 ### Fairness analysis
-To audit the fairness of a model, we first need to obtain its predictions on the test set (see above commands) and to obtain certain preprocessed data (see Preprocessing section) 
+To audit the fairness of a model, we first need to obtain its predictions on the test set (see above commands) and to obtain certain preprocessed data (see Preprocessing section).  
 For a more detailed documentation on the fairness analysis pipeline, see `./famews/famews/fairness_check/README.md`.
 #### LGBM model
 To audit an LGBM model, an example GIN config is available at `./config/lgbm_base_fairness.gin` and the following command can be run:
@@ -135,8 +135,8 @@ python -m famews.scripts.scripts.run_fairness_analysis \
     -l ./logs/lstm_base/seed_1111 \
     --seed 1111 \
 ```
-Please not that for this audit we don't run the `AnalyseFeatImportanceGroup` stage as it requires to compute the SHAP values and this isn't supported for DL learning model.
-However, if you still want to run this stage you can directly provide the SHAP values as input to the pipeline (see `./famews/famews/fairness_check/README.md` for more details)
+Please not that for this audit we don't run the `AnalyseFeatImportanceGroup` stage as it requires to compute the SHAP values and this isn't supported for DL learning model.  
+However, if you still want to run this stage you can directly provide the SHAP values as input to the pipeline (see `./famews/famews/fairness_check/README.md` for more details).
 
 
 
