@@ -9,7 +9,6 @@ import famews.fairness_check.model_performance.analyse_performance
 import famews.fairness_check.timegap_alarm_event.analyse_timegap
 import famews.fairness_check.medical_variables.analyse_med_vars
 import famews.fairness_check.analysis_pipeline
-import famews.fairness_check.feature_importance.analyse_feature_importance
 import famews.fairness_check.report_generation.create_pdf
 import famews.fairness_check.missingness.analyse_missingness
 
@@ -41,13 +40,14 @@ ENDPOINTS_DIR = "{HiRID processed data}/endpoints"
 ML_STAGE_DATA_PATH = "{...}/ml_stage/{data}.h5"
 COMMON_STAGE_DIR = "{HiRID processed data}/common_stage"
 
+
 # ----------------- FairnessAnalysisPipeline -------------
 FairnessAnalysisPipeline.use_multiple_predictions = False
 FairnessAnalysisPipeline.name_threshold = "event_recall_0.8"
 FairnessAnalysisPipeline.horizon = %HORIZON
 FairnessAnalysisPipeline.max_len = %MAXLEN
 FairnessAnalysisPipeline.timestep = %TIMESTEP
-FairnessAnalysisPipeline.analysis_stages = [@AnalysePerformanceGroup, @AnalyseTimeGapGroup, @AnalyseMedVarsGroup, @AnalyseFeatImportanceGroup, @AnalyseMissingnessGroup, @CreatePDFReport]
+FairnessAnalysisPipeline.analysis_stages = [@AnalysePerformanceGroup, @AnalyseTimeGapGroup, @AnalyseMedVarsGroup, @AnalyseMissingnessGroup, @CreatePDFReport]
 FairnessAnalysisPipeline.do_stat_test = True
 FairnessAnalysisPipeline.significance_level = 0.001
 FairnessAnalysisPipeline.filter_delta = 0
@@ -99,18 +99,6 @@ AnalyseMedVarsGroup.specified_conditions = {'has_vasop': {'norepinephrine': ('va
                                                           'milrinone': ('val>0', 'val==0'), 'levosimendan': ('val>0', 'val==0'), 'theophyllin': ('val>0', 'val==0'),
                                                           'vasopressin': ('val>0', 'val==0')}}
 AnalyseMedVarsGroup.vars_units = {"a_Lac": "mmol/l", "ABPm": "mmHg"}
-
-
-# ----------------AnalyseFeatImportanceGroup---------------
-AnalyseFeatImportanceGroup.use_cache = True
-AnalyseFeatImportanceGroup.overwrite = False
-AnalyseFeatImportanceGroup.ml_stage_data_path = %ML_STAGE_DATA_PATH
-AnalyseFeatImportanceGroup.split = "test"
-AnalyseFeatImportanceGroup.root_model_path = "./data/lgbm_base"
-AnalyseFeatImportanceGroup.model_type = 'classical_ml'
-AnalyseFeatImportanceGroup.model_save_name = 'model.joblib'
-AnalyseFeatImportanceGroup.task_name = %TASK
-AnalyseFeatImportanceGroup.root_shap_values_path = "./logs/lgbm_base"
 
 # ----------------AnalyseMissingnessGroup---------------
 AnalyseMissingnessGroup.use_cache = True
