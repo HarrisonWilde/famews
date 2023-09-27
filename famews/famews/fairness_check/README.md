@@ -3,7 +3,9 @@
 We will now give more details on how the `FairnessAnalysisPipeline` works. 
 It has primarly been designed to run on HiRID dataset. However, it is possible to give already processed input to each stage in order to run it on other dataset that differs in their format.
 We also encourage users to add functionalities to the tool in order to expand the range of compatible dataset.
-
+This tool has been created to audit Early-Warning systems in the medical domain. As such we expect for a set of patients to have a time-series of input features and a time-series of labels. 
+As we focused on early-warning, we expect a label to be positive when a target event occurs a certain amount (called the prediction horizon) of time after. While the patient is undergoing an event we expect the label to be NaN.
+ 
 ## Concepts used
 - Group name: refer to the attribute used to form the subcohorts of patients, for example sex or admission reason
 - Category: refer to the value taken by this attribute, it characterizes a specific subcohort, for example F (female) or Cardiovascular

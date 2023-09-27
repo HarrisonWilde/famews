@@ -109,7 +109,7 @@ Note that these runs will also store in the log directory the predictions obtain
 
 ### Fairness analysis
 To audit the fairness of a model, we first need to obtain its predictions on the test set (see above commands) and to obtain certain preprocessed data (see Preprocessing section) 
-
+For a more detailed documentation on the fairness analysis pipeline, see `./famews/famews/fairness_check/README.md`.
 #### LGBM model
 To audit an LGBM model, an example GIN config is available at `./config/lgbm_base_fairness.gin` and the following command can be run:
 ```
@@ -136,7 +136,7 @@ python -m famews.scripts.scripts.run_fairness_analysis \
     --seed 1111 \
 ```
 Please not that for this audit we don't run the `AnalyseFeatImportanceGroup` stage as it requires to compute the SHAP values and this isn't supported for DL learning model.
-However, if you still want to run this stage you can directly provide the SHAP values as input to the pipeline (see ... for more details)
+However, if you still want to run this stage you can directly provide the SHAP values as input to the pipeline (see `./famews/famews/fairness_check/README.md` for more details)
 
 
 
