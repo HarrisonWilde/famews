@@ -106,11 +106,11 @@ AnalyseFeatImportanceGroup.use_cache = True
 AnalyseFeatImportanceGroup.overwrite = False
 AnalyseFeatImportanceGroup.ml_stage_data_path = %ML_STAGE_DATA_PATH
 AnalyseFeatImportanceGroup.split = "test"
-AnalyseFeatImportanceGroup.root_model_path = "./data/lgbm_base"
+AnalyseFeatImportanceGroup.root_model_path = "./data/models/lgbm_base"
 AnalyseFeatImportanceGroup.model_type = 'classical_ml'
 AnalyseFeatImportanceGroup.model_save_name = 'model.joblib'
 AnalyseFeatImportanceGroup.task_name = %TASK
-AnalyseFeatImportanceGroup.root_shap_values_path = "./logs/lgbm_base"
+AnalyseFeatImportanceGroup.root_shap_values_path = "./logs/lgbm_base/seed_1111"
 
 # ----------------AnalyseMissingnessGroup---------------
 AnalyseMissingnessGroup.use_cache = True
