@@ -212,8 +212,6 @@ class LoadPatientsDf(StatefulPipelineStage):
         pid_name: str = "patientid",
         patients_source: str = "hirid",  # or "mimic"
         general_table_hirid_path: Path = None,
-        extra_info_hirid_path: Path = None,
-        extra_info_hirid_attributes: List[str] = [],
         root_mimic: Path = None,
         **kwargs,
     ):
@@ -231,10 +229,6 @@ class LoadPatientsDf(StatefulPipelineStage):
             Column name for patient id, by default "patientid"
         patients_source : str, optional
             Data source, by default "hirid"
-        extra_info_hirid_path : Path, optional
-            Path for dataframe containing extra information for HiRID, by default None
-        extra_info_hirid_attributes : List[str], optional
-            List of attributes to load from extra info table, by default []
         root_mimic : Path, optional
             (if patients_source is mimic) root directory of mimic tables, by default None
         """
@@ -243,8 +237,6 @@ class LoadPatientsDf(StatefulPipelineStage):
         self.pid_name = pid_name
         self.patients_source = patients_source
         self.general_table_hirid_path = general_table_hirid_path
-        self.extra_info_hirid_path = extra_info_hirid_path
-        self.extra_info_hirid_attributes = extra_info_hirid_attributes
         self.root_mimic = root_mimic
 
     def runnable(self) -> bool:
@@ -280,8 +272,6 @@ class LoadPatientsDf(StatefulPipelineStage):
                     self.general_table_hirid_path,
                     self.patients_df_file,
                     self.state.predictions,
-                    self.extra_info_hirid_path,
-                    self.extra_info_hirid_attributes,
                     self.state.timestep,
                 )
             elif self.patients_source == "mimic":

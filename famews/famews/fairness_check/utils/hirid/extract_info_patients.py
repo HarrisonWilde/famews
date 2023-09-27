@@ -46,37 +46,10 @@ def process_apache(apache_ii_group, apache_iv_group) -> Tuple[str, str]:
     return apache_group, surgical_status
 
 
-def add_extra_info(
-    df_patients: pd.DataFrame, extra_info_path: Path, extra_info_attributes: List[str]
-) -> pd.DataFrame:
-    """Add extra grouping attributes to df_patients based on the attributes in extra_info_attributes.
-
-    Parameters
-    ----------
-    df_patients : pd.DataFrame
-        Patients dataframe
-    extra_info_path : Path
-        Path for HiRID extra info
-    extra_info_attributes : List[str]
-        List of extra attributes
-
-    Returns
-    -------
-    pd.DataFrame
-        Patients dataframe with extra info attributes
-    """
-    df_extra_info = pd.read_parquet(extra_info_path).set_index("patientid")
-    for att in extra_info_attributes:
-        df_patients[att] = df_extra_info[att]
-    return df_patients
-
-
 def create_patients_df_hirid(
     general_table_path: Path,
     output_path: Path,
     predictions: Dict[int, Tuple[np.array, np.array]],
-    extra_info_path: Path = None,
-    extra_info_attributes: List[str] = [],
     timestep: int = 5,
 ) -> pd.DataFrame:
     """Create patients table containing cohort belonging information for each patient.
@@ -89,10 +62,6 @@ def create_patients_df_hirid(
         Path to store resulting table
     predictions : Dict[int, Tuple[np.array, np.array]]
         Predictions output by the model
-    extra_info_path : Path, optional
-        Path for HiRID extra info, by default None
-    extra_info_attributes : List[str], optional
-        List of extra attributes, by default []
     timestep: int, optional
         Timestep of time series in minutes, by default 5
 
@@ -117,7 +86,5 @@ def create_patients_df_hirid(
             result_type="expand",
             axis=1,
         )
-    if extra_info_path:
-        df_patients = add_extra_info(df_patients, extra_info_path, extra_info_attributes)
     df_patients.to_csv(output_path)
     return df_patients
