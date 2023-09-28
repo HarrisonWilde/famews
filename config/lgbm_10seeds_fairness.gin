@@ -40,7 +40,8 @@ GENERAL_TABLE_PATH = "{HiRID processed data}/general_table_extended.parquet"
 ENDPOINTS_DIR = "{HiRID processed data}/endpoints"
 ML_STAGE_DATA_PATH = "{...}/ml_stage/{data}.h5"
 COMMON_STAGE_DIR = "{HiRID processed data}/common_stage"
-MODELS_DIR = "./logs/lgbm_10seeds/test/{...}"
+PREDS_DIR = "./logs/lgbm_10seeds/test/{...}"
+MODELS_DIR = "./data/models/lgbm_10seeds" # can be the same as PREDS_DIR
 
 # ----------------- FairnessAnalysisPipeline -------------
 FairnessAnalysisPipeline.use_multiple_predictions = True
@@ -75,7 +76,7 @@ LoadSplitPids.data_table_file = %ML_STAGE_DATA_PATH
 # ----------------- Handle predictions ----------------- 
 #HandlePredictions.split = "test"
 HandleMultiplePredictions.split = "test"
-HandleMultiplePredictions.root_predictions_path = %MODELS_DIR
+HandleMultiplePredictions.root_predictions_path = %PREDS_DIR
 HandleMultiplePredictions.list_seeds = ["0", "1111", "2222", "3333", "4444", "5555", "6666", "7777", "8888", "9999"]
 
 # ----------------- AnalysePerformanceGroup ------------
@@ -115,7 +116,7 @@ AnalyseFeatImportanceGroup.model_seeds = ["0", "1111", "2222", "3333", "4444", "
 AnalyseFeatImportanceGroup.model_type = 'classical_ml'
 AnalyseFeatImportanceGroup.model_save_name = 'model.joblib'
 AnalyseFeatImportanceGroup.task_name = %TASK 
-AnalyseFeatImportanceGroup.root_shap_values_path = %MODELS_DIR
+AnalyseFeatImportanceGroup.root_shap_values_path = %PREDS_DIR
 
 # ----------------AnalyseMissingnessGroup---------------
 AnalyseMissingnessGroup.use_cache = True
