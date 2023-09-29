@@ -17,7 +17,7 @@ DEPTH = 1
 # Training Parameter
 LR = 3e-4
 BS = 64
-EPOCHS = 2
+EPOCHS = 100
 TASK = 'Dynamic_CircFailure_12Hours'
 ACC = 'gpu'
 WORKERS = 4
