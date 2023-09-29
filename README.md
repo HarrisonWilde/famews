@@ -8,6 +8,9 @@ We also encourage users to add functionalities to the tool in order to expand th
 This tool has been created to audit Early-Warning Systems in the medical domain. As such we consider a set of patients with a time-series of input features and a time-series of labels.   
 As we focus on early warning, we expect a label for a current time step to be positive when a targeted event occurs a certain amount (called the prediction horizon) of time in the future. While the patient is undergoing an event, we expect the label to be NaN.  
 
+For additional explanations on the tool, please refer to our paper: *FAMEWS: a Fairness Auditing tool for Medical Early-Warning Systems*.  
+We provide a sample fairness audit report (`sample_fairness_report.pdf`) that can be produced with FAMEWS. The instructions to reproduce the report are given in the section **Pipeline Overview - How to run FAMEWS on HiRID?** of this README below the header **[TO RUN TO REPRODUCE SAMPLE REPORT]** (there are three steps: HiRID preprocessing, model inference and fairness analysis).
+
 After explaining how to set up FAMEWS, we will first describe how to run it on the HiRID dataset and then we will give a more detailed documentation that extends its range of applications.
 
 ## Setup
@@ -61,9 +64,9 @@ Any task (preprocessing, training, evaluation, fairness analysis) is to be run w
 ### Preprocessing
  
 #### HiRID
-
-This repository depends on the work done by [Yèche et al. HiRID Benchmark](https://github.com/ratschlab/HIRID-ICU-Benchmark)
-to preprocess the HiRID dataset and get it ready for model training, as well as inference and fairness analysis.
+>**[TO RUN TO REPRODUCE SAMPLE REPORT]**  
+>This repository depends on the work done by [Yèche et al. HiRID Benchmark](https://github.com/ratschlab/HIRID-ICU-Benchmark)
+>to preprocess the HiRID dataset and get it ready for model training, as well as inference and fairness analysis.
 
 ### ML Training
 
@@ -96,13 +99,14 @@ python -m famews.scripts.submit_wrapper \
        -d ./logs/lgbm_10seeds
 ```
 
-We also provide pre-trained weights for the LGBM models trained with 10 different random seeds in `./data/models/lgbm_10seeds`.
-To generate the predictions from each of these models, one can launch the `submit_wrapper_pred_models.py` script with the following command:
-```
-python -m famews.scripts.submit_wrapper_pred_models \
-       --config ./config/lgbm_10seeds_pred.yaml \
-       -d ./logs/lgbm_10seeds
-```
+>**[TO RUN TO REPRODUCE SAMPLE REPORT]**  
+>We also provide pre-trained weights for the LGBM models trained with 10 different random seeds in `./data/models/lgbm_10seeds`.
+>To generate the predictions from each of these models, one can launch the `submit_wrapper_pred_models.py` script with the following command:
+>```
+>python -m famews.scripts.submit_wrapper_pred_models \
+>       --config ./config/lgbm_10seeds_pred.yaml \
+>       -d ./logs/lgbm_10seeds
+>```
 
 #### LSTM model
 To train an LSTM model, an example GIN config is available at `./config/lstm_base_train.gin`.
@@ -135,14 +139,14 @@ python -m famews.scripts.run_fairness_analysis \
     -l ./logs/lgbm_base/seed_1111 \
     --seed 1111
 ```
-
-We encourage users to audit an averaged model obtained from models trained on different random seeds, an example GIN config is available at `./config/lgbm_10seeds_fairness.gin` and the following command can be run:
-```
-python -m famews.scripts.run_fairness_analysis \
-    -g ./config/lgbm_10seeds_fairness.gin \
-    -l ./logs/lgbm_10seeds \
-    --seed 1111
-```
+>**[TO RUN TO REPRODUCE SAMPLE REPORT]**  
+>We encourage users to audit an averaged model obtained from models trained on different random seeds, an example GIN config is available at `./config/lgbm_10seeds_fairness.gin` and the following command can be run:
+>```
+>python -m famews.scripts.run_fairness_analysis \
+>    -g ./config/lgbm_10seeds_fairness.gin \
+>    -l ./logs/lgbm_10seeds \
+>    --seed 1111
+>```
 
 #### LSTM model
 To audit an LSTM model, an example GIN config is available at `./config/lstm_base_fairness.gin` and the following command can be run:
