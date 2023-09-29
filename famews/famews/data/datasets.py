@@ -372,11 +372,10 @@ class ICUVariableLengthLoaderTables(object):
             self.event_idx = np.where(tasks == possible_event)[0][0]
             self.event_name = possible_event
         else:
-            raise ValueError(
-                f"Event: {possible_event} for task {self.task} not found in {data_path}"
-            )
+            self.event_idx = -1
+            self.event_name = None
 
-        logging.info(f"[{self.__class__.__name__}] task: {self.task}, event: {self.event_name}")
+        logging.info(f"[{self.__class__.__name__}] task: {self.task}")
 
         # Processing the data part
         self.lookup_table: Optional[dict[str, Any]] = None
@@ -408,10 +407,15 @@ class ICUVariableLengthLoaderTables(object):
             self.labels = {
                 split: self.data_h5["labels"][split][:, self.task_idx] for split in self.splits
             }
-            self.events = {
-                split: self.data_h5["labels"][split][:, self.event_idx].astype(np.float32)
-                for split in self.splits
-            }
+
+            if self.event_idx != -1:
+                self.events = {
+                    split: self.data_h5["labels"][split][:, self.event_idx].astype(np.float32)
+                    for split in self.splits
+                }
+            else:
+                self.events = None
+                
             # We reindex Apache groups to [0,15]
             if reindex_label:
                 label_values = np.unique(
