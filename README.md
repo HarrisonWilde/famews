@@ -49,8 +49,8 @@ pip install -e ./famews
 
 We use [Gin Configurations](https://github.com/google/gin-config/tags) to configure the
 machine learning pipelines, preprocessing, and evaluation pipelines. Example configurations are in `./config`.  
-Please note that some paths need to be completed in these configs based on where the preprocessing outputs have been saved.
-To facilitate this step, they are all gathered under `# Paths preprocessed data` or `# Data parameter`.
+**Please note that some paths need to be completed in these configs based on where the preprocessing outputs have been saved.
+To facilitate this step, they are all gathered under `# Paths preprocessed data` or `# Data parameter`.**
 
 ## Pipeline Overview - How to run FAMEWS on HiRID?
 
