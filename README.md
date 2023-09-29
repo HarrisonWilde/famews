@@ -173,7 +173,7 @@ These are the general preliminary steps that are required before running the `Fa
 *On HiRID:*
     Store predictions on the test set by running the training pipeline with an additional stage `HandlePredictions` (example GIN configs are given in `./config`)
 *On other data source:*
-    Save your predictions in a pickle file as a dictionary: `{patient_id: (predictions, labels)}`. 
+    Save your predictions in a pickle file as a dictionary: `{patient_id: (predictions, labels)}`, `predictions` and `labels` need to be NumPy arrays. 
 #### Define your groupings
 *For all data sources*
     Define which groupings and cohorts of patients you want to study in a YAML file (an example is given for **HiRID** in `config/group_hirid_complete.yaml` and for **MIMIC** in `config/group_mimic_complete.yaml`)
@@ -337,18 +337,20 @@ The results of the analysis will be stored in `{log_directory}/fairness_check/{s
 In case the target event has no duration i.e. it is a single timestep, it is possible to run the analysis but the event boundaries should be constructed accordingly `{patient_id: [(timepoint_event, timepoint_event+1)]}`.
 
 #### No early warning
-In case the alarm system is meant to raise the alarm when the event starts, the `horizon` has to be set at 0.
+In case the alarm system is meant to raise the alarm when the event starts, the `HORIZON` has to be set at 0.
 The stage `AnalyseTimeGapGroup` cannot be run. Note also that event-based metrics are ill-defined in this case, we thus advise to not use them in the audit and to choose a threshold target that does not depend on them.
 
 #### Classical binary classification
-For the following use-cases, `AnalyseTimeGapGroup` and `AnalyseMissingnessGroup`  aren't supported as well as all event-based metrics. 
+For the following use-cases, `AnalyseTimeGapGroup` and `AnalyseMissingnessGroup`  aren't supported as well as all event-based metrics.  
+Set `MAXLEN` to 1, `HORIZON` to 0.
 *Single output for each patient*
 Consider a use-case where the input data is still time-series for each patient but the output is a single label.
-Predictions have to be stored in the following format `{patient_id: ([prediction], [label])}`. If the label is positive then the event boundary for the patient is `[(0, len(input))]` else it is an empty list.
+Predictions have to be stored in the following format `{patient_id: (np.array([prediction]), np.array([label]))}`. If the label is positive then the event boundary for the patient is `[(0, 1),  (1,len(input))]` else it is an empty list.
 `AnalyseFeatImportanceGroup` can be run if the SHAP values are pre-computed as explained above.
 
 *Single output and no time-series input for each patient*
+Set `TIMESTEP` to 1.
 Consider a use-case where the input data for a patient is a single value for each feature and the output is a single label. 
-Predictions have to be stored in the following format `{patient_id: ([prediction], [label])}`. If the label is positive then the event boundary for the patient is `[(0, 1)]` else it is an empty list. 
+Predictions have to be stored in the following format `{patient_id: (np.array([prediction]), np.array([label]))}`. If the label is positive then the event boundary for the patient is `[(0, 1), (1, -1)]` else it is an empty list. 
 `AnalyseMedVarsGroup` can't be run.
 `AnalyseFeatImportanceGroup` can be run if the SHAP values are pre-computed as explained above.
