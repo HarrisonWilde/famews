@@ -45,7 +45,7 @@ The `famews` package contains the relevant code components
 for the pipeline. Install the package into your environment
 with:
 ```
-pip install -e ./famews
+pip install -e ./
 ```
 
 ### Configurations
