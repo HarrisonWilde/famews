@@ -316,16 +316,25 @@ def run_on_slurm(
     multi_gpu_flag: bool
         whether this is a multi-gpu run
     """
+    # Check if SLURM is available
+    slurm_avail = shutil.which("sbatch") is not None
+    if not slurm_avail:
+        logging.warning("[SUBMIT] `sbatch` not available")
+        logging.warning(f"[SUBMIT] assuming local run without Slurm")
 
     config_cmds = config_to_cmd_str(config, args, multi_gpu_flag=multi_gpu_flag)
     for config_cmd in config_cmds:
 
-        run_cmd = ' --wrap="'
-        run_cmd += config_cmd
-        run_cmd += '"'
+        if slurm_avail:
+            run_cmd = ' --wrap="'
+            run_cmd += config_cmd
+            run_cmd += '"'
 
-        full_cmd = slurm_command + run_cmd
-        # logging.info(f"Run: {full_cmd}")
+            full_cmd = slurm_command + run_cmd
+            # logging.info(f"Run: {full_cmd}")
+        else:
+            logging.info(f"[SUBMIT: slurm not available] {config_cmd}")
+            full_cmd = config_cmd
 
         completed_process = subprocess.run(
             shlex.split(full_cmd), stdout=subprocess.DEVNULL, check=True
