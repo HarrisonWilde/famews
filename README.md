@@ -81,7 +81,7 @@ python -m famews.scripts.train_tabular_model \
 ```
 Note that these runs will also store in the log directory the predictions obtained on the test set.
 
-You can launch several training with the `submit_wrapper.py` script. We encourage to do so to obtain model predictions from different random seeds (see config at `./config/lgbm_10seeds.yaml`).
+You can launch several training with the `submit_wrapper.py` script (the script is designed with a Slurm based cluster in mind, if you are using a different kind of system you might need to adapt some of the functions). We encourage to do so to obtain model predictions from different random seeds (see config at `./config/lgbm_10seeds.yaml`).
 The following command can be run:
 ```
 python -m phrt_ml.phrt_ml.scripts.submit_wrapper \
