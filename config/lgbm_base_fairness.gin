@@ -33,15 +33,20 @@ WORKERS = -1
 RES = 1
 RES_LAB = 1
 MAXLEN = 2016
-DATA_PATH = "{...}/ml_stage/{data}.h5"
+TIMESTEP = 5
+
+# Paths preprocessed data
+GENERAL_TABLE_PATH = "{HiRID processed data}/general_table_extended.parquet"
+ENDPOINTS_DIR = "{HiRID processed data}/endpoints"
+ML_STAGE_DATA_PATH = "{...}/ml_stage/{data}.h5"
+COMMON_STAGE_DIR = "{HiRID processed data}/common_stage"
 
 # ----------------- FairnessAnalysisPipeline -------------
-FairnessAnalysisPipeline.use_multiple_predictions = True
-#FairnessAnalysisPipeline.threshold_score = 0.31
+FairnessAnalysisPipeline.use_multiple_predictions = False
 FairnessAnalysisPipeline.name_threshold = "event_recall_0.8"
 FairnessAnalysisPipeline.horizon = %HORIZON
 FairnessAnalysisPipeline.max_len = %MAXLEN
-FairnessAnalysisPipeline.timestep = 5
+FairnessAnalysisPipeline.timestep = %TIMESTEP
 FairnessAnalysisPipeline.analysis_stages = [@AnalysePerformanceGroup, @AnalyseTimeGapGroup, @AnalyseMedVarsGroup, @AnalyseFeatImportanceGroup, @AnalyseMissingnessGroup, @CreatePDFReport]
 FairnessAnalysisPipeline.do_stat_test = True
 FairnessAnalysisPipeline.significance_level = 0.001
@@ -53,20 +58,21 @@ SetUpGroupDef.group_config_file = "./config/group_hirid_complete.yaml"
 # ----------------- LoadPatientsDf ---------------------
 LoadPatientsDf.patients_df_file = "./preprocessed_data/HiRID/socioinfo_patients_groups.csv"
 LoadPatientsDf.pid_name = "patientid"
+LoadPatientsDf.patients_source = "hirid"
+LoadPatientsDf.general_table_hirid_path = %GENERAL_TABLE_PATH
 
 # ---------------- LoadEventBounds ---------------------
 LoadEventBounds.event_bounds_file = "./preprocessed_data/HiRID/patients_cf_bounds.pkl"
-#LoadEventBounds.merge_time_min = 30 #in minutes
+LoadEventBounds.patient_endpoint_data_dir = %ENDPOINTS_DIR
+LoadEventBounds.event_column = "circ_failure_status"
+LoadEventBounds.patients_source = "hirid"
 
 # -----------------LoadSplitPids ---------------------
 LoadSplitPids.split_file = "./preprocessed_data/HiRID/pid_split.pickle"
-#LoadSplitPids.data_table_file = DATA_PATH
+LoadSplitPids.data_table_file = %ML_STAGE_DATA_PATH
 
 # ----------------- Handle predictions ----------------- 
-#HandlePredictions.split = "test"
-HandleMultiplePredictions.split = "test"
-HandleMultiplePredictions.root_predictions_path = "./logs/lgbm_base10/test/loyal-capable-copperhead"
-HandleMultiplePredictions.list_seeds = ["0", "1111", "2222", "3333", "4444", "5555", "6666", "7777", "8888", "9999"]
+HandlePredictions.split = "test"
 
 # ----------------- AnalysePerformanceGroup ------------
 AnalysePerformanceGroup.use_cache = True
@@ -85,7 +91,7 @@ AnalyseTimeGapGroup.groups_start_event = [0, 3, 6, 12]
 # ----------------AnalyseMedVarsGroup---------------
 AnalyseMedVarsGroup.use_cache = True
 AnalyseMedVarsGroup.overwrite = False
-AnalyseMedVarsGroup.path_common_stage_dir = "{HiRID processed data}/common_stage"
+AnalyseMedVarsGroup.path_common_stage_dir = %COMMON_STAGE_DIR
 AnalyseMedVarsGroup.patients_source = 'hirid'
 AnalyseMedVarsGroup.classical_vars = ["a_Lac"]
 AnalyseMedVarsGroup.conditioned_vars = {'ABPm': ('has_vasop', False)}
@@ -98,20 +104,18 @@ AnalyseMedVarsGroup.vars_units = {"a_Lac": "mmol/l", "ABPm": "mmHg"}
 # ----------------AnalyseFeatImportanceGroup---------------
 AnalyseFeatImportanceGroup.use_cache = True
 AnalyseFeatImportanceGroup.overwrite = False
-AnalyseFeatImportanceGroup.ml_stage_data_path = %DATA_PATH
+AnalyseFeatImportanceGroup.ml_stage_data_path = %ML_STAGE_DATA_PATH
 AnalyseFeatImportanceGroup.split = "test"
-AnalyseFeatImportanceGroup.root_model_path = "./logs/lgbm_base10/test/loyal-capable-copperhead"
-AnalyseFeatImportanceGroup.model_seeds = ["0", "1111", "2222", "3333", "4444", "5555", "6666", "7777", "8888", "9999"]
+AnalyseFeatImportanceGroup.root_model_path = "./data/models/lgbm_base"
 AnalyseFeatImportanceGroup.model_type = 'classical_ml'
 AnalyseFeatImportanceGroup.model_save_name = 'model.joblib'
-AnalyseFeatImportanceGroup.task_name = %TASK 
-AnalyseFeatImportanceGroup.root_shap_values_path = "./logs/lgbm_base10/test/loyal-capable-copperhead"
-#AnalyseFeatImportanceGroup.feature_names_path = ""
+AnalyseFeatImportanceGroup.task_name = %TASK
+AnalyseFeatImportanceGroup.root_shap_values_path = "./logs/lgbm_base/seed_1111"
 
 # ----------------AnalyseMissingnessGroup---------------
 AnalyseMissingnessGroup.use_cache = True
 AnalyseMissingnessGroup.overwrite = False
-AnalyseMissingnessGroup.path_common_stage_dir = "{HiRID processed data}/common_stage"
+AnalyseMissingnessGroup.path_common_stage_dir = %COMMON_STAGE_DIR
 AnalyseMissingnessGroup.patients_source = 'hirid'
 AnalyseMissingnessGroup.medical_vars = {'a_Lac': 480, 'Spitzendruck': 5}
 AnalyseMissingnessGroup.vars_only_patient_msrt = ['a_Lac']

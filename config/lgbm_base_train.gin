@@ -4,7 +4,7 @@ import famews.data.datasets
 import famews.models.encoders
 import famews.train.sequence
 import famews.train.utils
-import famews.evaluation.event
+import famews.utils.handle_predictions
 
 # Model Parameter
 NUM_CLASSES = 1
@@ -26,6 +26,7 @@ RES = 1
 RES_LAB = 1
 MAXLEN = 2016
 DATA_PATH = "{...}/ml_stage/{data}.h5"
+
 # Dataset
 ICUVariableLengthDataset.maxlen = %MAXLEN
 ICUVariableLengthDataset.feature_load_full_ram = True
@@ -40,7 +41,7 @@ ICUVariableLengthLoaderTables.on_RAM = False
 # MLTrainPipeline
 MLTrainPipeline.do_train = True
 MLTrainPipeline.do_test = True
-MLTrainPipeline.stages = [] 
+MLTrainPipeline.stages = [@HandlePredictions] # add the HandlePredictions stage to the pipeline 
 
 
 # SetupTrain Stage
@@ -71,3 +72,8 @@ LGBMClassifier.min_child_samples = %MIN_CHILD_LEAF
 LGBMClassifier.subsample = %SUBSAMPLE_DATA
 LGBMClassifier.subsample_freq = %BAGGING_FREQ
 LGBMClassifier.colsample_bytree = %SUBSAMPLE_FEAT
+
+# ----------------- Handle predictions ----------------- 
+HandlePredictions.accelerator = %ACC
+HandlePredictions.use_pred_cache = True
+HandlePredictions.split = "test"
