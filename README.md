@@ -55,7 +55,8 @@ Any task (preprocessing, training, evaluation, fairness analysis) is to be run w
  
 #### HiRID
 
-TODO: refer to HiRID submodule
+This repository depends on the work done by [Yèche et al. HiRID Benchmark](https://github.com/ratschlab/HIRID-ICU-Benchmark)
+to preprocess the HiRID dataset and get it ready for model training, as well as inference and fairness analysis.
 
 ### ML Training
 
