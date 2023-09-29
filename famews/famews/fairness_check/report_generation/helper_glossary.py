@@ -70,7 +70,7 @@ def generate_glossary_model_performance(list_metrics: List[str]) -> list:
     story.append(
         Paragraph(
             (
-                "<b>P</b> number of positive labels, <b>N</b> number of negative labels, <b>TP</b> number of correctly predicted positive labels, <b>TN</b> number of correctly predicted negative labels, <b>FP</b> number of wrongly predicted negative labels, <b>FN</b> number of wrongly predicted positive labels."
+                "<b>P</b> number of positive labels, <b>N</b> number of negative labels, <b>TP</b> number of correctly predicted positive labels, <b>TN</b> number of correctly predicted negative labels, <b>FP</b> number of instances with true negative labels but that were incorrectly predicted as positive by the model, <b>FN</b> number of instances with true positive labels but that were incorrectly predicted as negative by the model."
             )
         )
     )
