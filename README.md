@@ -12,7 +12,7 @@ For additional explanations on the tool, please refer to our paper: *FAMEWS: a F
 We provide a sample fairness audit report (`sample_fairness_report.pdf`) that can be produced with FAMEWS. The instructions to reproduce the report are given in the section **Pipeline Overview - How to run FAMEWS on HiRID?** of this README below the header **[TO RUN TO REPRODUCE SAMPLE REPORT]** (there are three steps: HiRID preprocessing, model inference and fairness analysis).
 
 After explaining how to set up FAMEWS, we will describe how to run it on the HiRID dataset and how to obtain the sample report. 
-A more [detailed documentation](documentation/DETAILED_DOCS.md) on the extended range of applications is also available.
+A more [detailed documentation](documentation/DETAILED_DOC.md) on the extended range of applications is also available.
 
 ## Setup
 
