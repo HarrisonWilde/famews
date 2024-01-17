@@ -42,11 +42,10 @@ conda activate famews
 
 ### Code Package
 
-The `famews` package contains the relevant code components
-for the pipeline. Install the package into your environment
-with:
+The `famews` package can be installed using `pip` and
+is part of the environment file `environment_linux.yml`. Otherwise, you can install it with:
 ```
-pip install -e ./
+pip install famews
 ```
 
 ### Configurations
