@@ -1,3 +1,5 @@
+import os
+import codecs
 import setuptools
 
 with open("README.md", "r", encoding="utf-8") as fh:
@@ -32,8 +34,7 @@ setuptools.setup(
     python_requires=">=3.9",
     install_requires=[
         'pandas',
-        'pytorch',
-        'numpy',
+        'numpy==1.23',
         'pandas<2.0',
         'scikit-learn>=1.2.0',
         'jupyter',
@@ -43,24 +44,20 @@ setuptools.setup(
         'mypy==0.981',
         'tqdm>=4.64',
         'pyarrow>=8.0.0',
-        'pytables>=3.7.0',
         'black==22.6.0',
         'isort==5.9.3',
-        'pyspark>=3.2.1',
         'gin-config>=0.5.0',
         'tensorboard>=2.11.0',
         'coolname>=2.2.0',
-        'lightgbm>=3.3.5',
         'plotly>=5.9.0',
         'shap>=0.41.0',
         'setuptools',
         'wheel',
         'twine',
         'pathos>=0.2.9',
-        'scikit-fda>=0.8.1',
         'coloredlogs>=15.0',
         'types-PyYAML',
-        'reportlab>=4.0.4'
+        'reportlab>=4.0.4',
         'rbo>=0.1.3'
     ]
 )
