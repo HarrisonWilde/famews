@@ -1,0 +1,2 @@
+The [extubation failure report](extubation_failure_report.pdf) and the [respiratory failure report](respiratory_failure_report.pdf) are based on the early-warning systems described in [Hüser et al., 2024](https://www.medrxiv.org/content/10.1101/2024.01.23.24301516v1).
+Contrary to the regular setting of early-warning system, the extubation failure is determined only at the extubation event, the prediction horizon is thus of 0s. FAMEWS can also be run for this kind of tasks.
