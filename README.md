@@ -9,7 +9,7 @@ This tool has been created to audit Early-Warning Systems in the medical domain.
 As we focus on early warning, we expect a label for a current time step to be positive when a targeted event occurs a certain amount (called the prediction horizon) of time in the future. While the patient is undergoing an event, we expect the label to be NaN.  
 
 For additional explanations on the tool, please refer to our paper: *FAMEWS: a Fairness Auditing tool for Medical Early-Warning Systems*.  
-We provide a sample fairness audit report (`sample_fairness_report.pdf`) that can be produced with FAMEWS. The instructions to reproduce the report are given in the section **Pipeline Overview - How to run FAMEWS on HiRID?** of this README below the header **[TO RUN TO REPRODUCE SAMPLE REPORT]** (there are three steps: HiRID preprocessing, model inference and fairness analysis).
+We provide sample fairness audit reports in the folder [data/sample_reports](data/sample_reports) that can be produced with the help of FAMEWS. The report [hirid_circ_fairness_report.pdf](data/sample_reports/hirid_circ_fairness_report.pdf) is fully reproducible with our code. The instructions to reproduce it are given in the section **Pipeline Overview - How to run FAMEWS on HiRID?** of this README below the header **[TO RUN TO REPRODUCE SAMPLE REPORT]** (there are three steps: HiRID preprocessing, model inference and fairness analysis).
 
 After explaining how to set up FAMEWS, we will describe how to run it on the HiRID dataset and how to obtain the sample report. 
 A more [detailed documentation](documentation/DETAILED_DOC.md) on the extended range of applications is also available.
