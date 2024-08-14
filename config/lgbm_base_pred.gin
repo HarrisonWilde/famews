@@ -25,7 +25,7 @@ WORKERS = -1
 RES = 1
 RES_LAB = 1
 MAXLEN = 2016
-DATA_PATH = "{...}/ml_stage/{data}.h5"
+DATA_PATH = "/data/harry/hirid/ml_stage/ml_stage_12h.h5"
 
 # Dataset
 ICUVariableLengthDataset.maxlen = %MAXLEN

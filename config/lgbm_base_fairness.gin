@@ -36,10 +36,10 @@ MAXLEN = 2016
 TIMESTEP = 5
 
 # Paths preprocessed data
-GENERAL_TABLE_PATH = "{HiRID processed data}/general_table_extended.parquet"
-ENDPOINTS_DIR = "{HiRID processed data}/endpoints"
-ML_STAGE_DATA_PATH = "{...}/ml_stage/{data}.h5"
-COMMON_STAGE_DIR = "{HiRID processed data}/common_stage"
+GENERAL_TABLE_PATH = "/data/harry/hirid/general_table_extended.parquet"
+ENDPOINTS_DIR = "/data/harry/hirid/endpoints"
+ML_STAGE_DATA_PATH = "/data/harry/hirid/ml_stage/ml_stage_12h.h5"
+COMMON_STAGE_DIR = "/data/harry/hirid/common_stage"
 
 # ----------------- FairnessAnalysisPipeline -------------
 FairnessAnalysisPipeline.use_multiple_predictions = False
