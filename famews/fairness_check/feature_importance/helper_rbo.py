@@ -1,6 +1,6 @@
 from typing import Dict, List, Tuple
 
-import rbo
+from famews.fairness_check.feature_importance.rbo import RankingSimilarity
 
 
 def get_critical_rbo_value(
@@ -27,7 +27,9 @@ def get_critical_rbo_value(
     critical_rbo = 1
     for dict_feat_ranking in feat_ranking_random.values():
         for random_rk in dict_feat_ranking.values():
-            rbo_random = rbo.RankingSimilarity(feat_ranking_all, random_rk).rbo(p=0.935, k=k)
+            rbo_random = RankingSimilarity(feat_ranking_all, random_rk).rbo(
+                p=0.935, k=k
+            )
             if rbo_random < critical_rbo:
                 critical_rbo = rbo_random
     return critical_rbo
@@ -57,7 +59,7 @@ def compare_ranking_rbo(
     Tuple[float, bool]
         RBO(feat_ranking_all, feat_ranking_cat), boolean assessing whether feat_ranking_cat is significantly different from feat_ranking_all
     """
-    rbo_value = rbo.RankingSimilarity(feat_ranking_all, feat_ranking_cat).rbo(p=0.935, k=k)
+    rbo_value = RankingSimilarity(feat_ranking_all, feat_ranking_cat).rbo(p=0.935, k=k)
     return rbo_value, rbo_value < critical_rbo
 
 

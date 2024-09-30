@@ -21,8 +21,8 @@ from coolname import generate_slug
 from joblib import dump, load
 from torch.nn.functional import binary_cross_entropy_with_logits
 from torchmetrics.classification import BinaryAUROC, BinaryAveragePrecision
-from wandb.lightgbm import wandb_callback
 
+# from wandb.lightgbm import wandb_callback
 from famews.models.encoders import SequenceModel
 from famews.train.utils import (
     binary_task_masked_select,
@@ -110,7 +110,9 @@ class SequenceWrapper(pl.LightningModule):
         self.smooth_labels = False
 
         if self.l1_reg_emb > 0.0:
-            assert isinstance(self.model, SequenceModel), "Regularizer assumes SequenceModel"
+            assert isinstance(
+                self.model, SequenceModel
+            ), "Regularizer assumes SequenceModel"
             logging.info(
                 f"[{self.__class__.__name__}] Adding L1 regularization to embedding layer with strength {l1_reg_emb}"
             )
@@ -119,7 +121,6 @@ class SequenceWrapper(pl.LightningModule):
         self.smooth_labels = smooth
 
     def set_metrics(self, task: str):
-
         if task == "classification/binary":
             self.output_transform = sigmoid_binary_output_transform
             self.logit_transform = binary_task_masked_select
@@ -150,7 +151,9 @@ class SequenceWrapper(pl.LightningModule):
             self.output_transform = lambda x: x
             self.metrics
             # TODO: implement
-            raise NotImplementedError(f"Regression not yet supported, need to add label scaling")
+            raise NotImplementedError(
+                f"Regression not yet supported, need to add label scaling"
+            )
 
         else:
             raise ValueError(f"Unsupported task type: {task}")
@@ -168,7 +171,6 @@ class SequenceWrapper(pl.LightningModule):
         return sum(torch.abs(p).sum() for p in embedding_layer.parameters()) / n_params
 
     def forward(self, x: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
-
         if self.model_req_mask:
             return self.model(x, mask)
 
@@ -186,7 +188,6 @@ class SequenceWrapper(pl.LightningModule):
             return batch
 
     def predict_step(self, batch, batch_idx, dataloader_idx=0):
-
         batch = self._get_batch(batch)
         if len(batch) == 3:
             data, labels, mask = batch
@@ -200,7 +201,6 @@ class SequenceWrapper(pl.LightningModule):
         return preds, labels, patient_ids
 
     def compute_loss(self, logits: torch.Tensor, labels: torch.Tensor) -> torch.Tensor:
-
         # Task specific loss
         loss = self.loss(logits, labels)
 
@@ -214,7 +214,6 @@ class SequenceWrapper(pl.LightningModule):
         return loss, l1_loss
 
     def training_step(self, batch, batch_idx: int):
-
         data, labels, mask = self._get_batch(batch)
         logits = self(data, mask)  # calls forward
 
@@ -230,16 +229,19 @@ class SequenceWrapper(pl.LightningModule):
         loss, _ = self.compute_loss(logits_flat, labels_flat)
         step_dict = {"loss": loss}
 
-        preds_flat, labels_trans = self.output_transform((logits_flat, metric_labels_flat))
+        preds_flat, labels_trans = self.output_transform(
+            (logits_flat, metric_labels_flat)
+        )
         for metric in self.metrics["train"].values():
             metric.update(preds_flat.detach().cpu(), labels_trans.detach().cpu())
 
         return step_dict
 
     def training_epoch_end(self, outputs) -> None:
-
         # nan to num as in distributed training some batches may be empty towards end of epoch
-        train_loss = np.mean([np.nan_to_num(x["loss"].detach().cpu().numpy()) for x in outputs])
+        train_loss = np.mean(
+            [np.nan_to_num(x["loss"].detach().cpu().numpy()) for x in outputs]
+        )
         self.log("train/loss", train_loss, prog_bar=True)  # logger=False)
 
         for name, metric in self.metrics["train"].items():
@@ -248,7 +250,6 @@ class SequenceWrapper(pl.LightningModule):
             metric.reset()
 
     def validation_step(self, batch, batch_idx: int):
-
         data, labels, mask = self._get_batch(batch)
         logits = self(data, mask)  # calls forward
 
@@ -264,16 +265,19 @@ class SequenceWrapper(pl.LightningModule):
         loss, _ = self.compute_loss(logits_flat, labels_flat)
         step_dict = {"loss": loss}
 
-        preds_flat, labels_trans = self.output_transform((logits_flat, metric_labels_flat))
+        preds_flat, labels_trans = self.output_transform(
+            (logits_flat, metric_labels_flat)
+        )
         for metric in self.metrics["val"].values():
             metric.update(preds_flat.detach().cpu(), labels_trans.detach().cpu())
 
         return step_dict
 
     def validation_epoch_end(self, outputs) -> None:
-
         # nan to num as in distributed training some batches may be empty towards end of epoch
-        val_loss = np.mean([np.nan_to_num(x["loss"].detach().cpu().numpy()) for x in outputs])
+        val_loss = np.mean(
+            [np.nan_to_num(x["loss"].detach().cpu().numpy()) for x in outputs]
+        )
         self.log("val/loss", val_loss, prog_bar=True)  # logger=False)
 
         for name, metric in self.metrics["val"].items():
@@ -282,7 +286,6 @@ class SequenceWrapper(pl.LightningModule):
             metric.reset()
 
     def test_step(self, batch, batch_idx: int, dataset_idx: int = 0):
-
         data, labels, mask = self._get_batch(batch)  # Never smoothed labels
         if self.smooth_labels:
             loss_labels = labels[..., 1]  # We dont use smooth label for loss
@@ -343,7 +346,6 @@ class TabularWrapper(object):
         self.task = task
 
     def set_metrics(self, task: str):
-
         if task == "classification/binary":
             self.output_transform = sigmoid_binary_output_transform
             self.logit_transform = binary_task_masked_select
@@ -374,7 +376,9 @@ class TabularWrapper(object):
             self.output_transform = lambda x: x
             self.metrics = {}
             # TODO: implement
-            raise NotImplementedError(f"Regression not yet supported, need to add label scaling")
+            raise NotImplementedError(
+                f"Regression not yet supported, need to add label scaling"
+            )
 
         else:
             raise ValueError(f"Unsupported task type: {task}")
@@ -388,21 +392,24 @@ class TabularWrapper(object):
         early_stopping_rounds: int = None,
         wandb_project: str = None,
     ):
-
         # TODO implement early stopping for non lightgbm methods
         callbacks = []
         if early_stopping_rounds is not None:
-            es_callback = lightgbm.early_stopping(early_stopping_rounds, first_metric_only=True)
+            es_callback = lightgbm.early_stopping(
+                early_stopping_rounds, first_metric_only=True
+            )
             callbacks += [es_callback]
         if wandb_project is not None:
             params = {}
             params["metric"] = sorted(eval_metric)
             init_wandb(wandb_project, config=params)
-            callbacks += [wandb_callback()]
+            # callbacks += [wandb_callback()]
         if len(callbacks) == 0:
             callbacks = None
 
-        self.model.fit(X, y, eval_set=eval_set, eval_metric=eval_metric, callbacks=callbacks)
+        self.model.fit(
+            X, y, eval_set=eval_set, eval_metric=eval_metric, callbacks=callbacks
+        )
         self.trained = True
         # if wandb_project is not None:
         #     log_summary(self.model.booster_, save_model_checkpoint=True)
