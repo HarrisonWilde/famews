@@ -120,10 +120,13 @@ class FairnessAnalysisPipeline(PipelineBase):
             self.state.fairness_log_dir = self.state.fairness_log_dir / "w_stat_test"
         else:
             self.state.fairness_log_dir = self.state.fairness_log_dir / "no_stat_test"
-        self.state.fairness_log_dir = self.state.fairness_log_dir / self.state.name_threshold
+        self.state.fairness_log_dir = (
+            self.state.fairness_log_dir / self.state.name_threshold
+        )
         if self.state.merge_time_min:
             self.state.fairness_log_dir = (
-                self.state.fairness_log_dir / f"merge_event_{self.state.merge_time_min}min"
+                self.state.fairness_log_dir
+                / f"merge_event_{self.state.merge_time_min}min"
             )
 
         additional_stages = []
@@ -132,7 +135,9 @@ class FairnessAnalysisPipeline(PipelineBase):
             if isinstance(stage, StatefulPipelineStage):
                 additional_stages.append(stage)
             else:
-                raise ValueError(f"Invalid stage: {stage} must be a `StatefulPipelineStage`")
+                raise ValueError(
+                    f"Invalid stage: {stage} must be a `StatefulPipelineStage`"
+                )
 
         final_stages = setup_stages + additional_stages + [Cleanup(self.state)]
         self.add_stages(final_stages)
@@ -144,7 +149,6 @@ class FairnessAnalysisPipeline(PipelineBase):
 
 @gin.configurable("SetUpGroupDef", denylist=["state"])
 class SetUpGroupDef(StatefulPipelineStage):
-
     name = "Set up Group Definition"
 
     def __init__(
@@ -264,7 +268,9 @@ class LoadPatientsDf(StatefulPipelineStage):
             A grouping is present in the grouping definition but not in the patients dataframe
         """
         if self.patients_df_file.exists():
-            self.state.patients_df = pd.read_csv(self.patients_df_file).set_index(self.pid_name)
+            self.state.patients_df = pd.read_csv(self.patients_df_file).set_index(
+                self.pid_name
+            )
         else:
             self.patients_df_file.parent.mkdir(parents=True, exist_ok=True)
             if self.patients_source == "hirid":
@@ -347,7 +353,9 @@ class LoadEventBounds(StatefulPipelineStage):
         bool
             Whether the stage has been completed.
         """
-        return hasattr(self.state, "event_bounds") and self.state.event_bounds is not None
+        return (
+            hasattr(self.state, "event_bounds") and self.state.event_bounds is not None
+        )
 
     def run(self):
         """
@@ -424,7 +432,9 @@ class LoadSplitPids(StatefulPipelineStage):
         else:
             self.split_file.parent.mkdir(parents=True, exist_ok=True)
             self.state.pid_split = {}
-            patient_windows = tables.open_file(self.data_table_file).root.patient_windows
+            patient_windows = tables.open_file(
+                self.data_table_file
+            ).root.patient_windows
             for split in ["train", "val", "test"]:
                 self.state.pid_split[split] = patient_windows[split][:, 2]
             with open(self.split_file, "wb") as f:

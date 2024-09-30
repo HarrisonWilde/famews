@@ -5,7 +5,6 @@ from typing import Dict, List
 
 import gin
 import pandas as pd
-
 from famews.fairness_check.model_performance.helper_analyse_performance import (
     compute_metrics,
     compute_prevalence_groups,
@@ -131,7 +130,9 @@ class AnalysePerformanceGroup(StatefulPipelineStage):
         if self.do_bootstrap:
             n_samples = 100
             bootstrap_sample_pids = draw_bootstrap_sample(
-                list(self.state.predictions.keys()), sample_size=1, n_samples=10 * n_samples
+                list(self.state.predictions.keys()),
+                sample_size=1,
+                n_samples=10 * n_samples,
             )  # do we want to parametrise this?
         else:
             n_samples = 1
